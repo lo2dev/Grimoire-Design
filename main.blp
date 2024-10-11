@@ -1,0 +1,346 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Window GrimoireWindow {
+  width-request: 360;
+  height-request: 200;
+  default-width: 750;
+  default-height: 480;
+
+  Adw.Breakpoint {
+    condition ("max-width: 580sp")
+
+    setters {
+      split_view.collapsed: true;
+    }
+  }
+
+  content: Adw.NavigationSplitView split_view {
+    show-content: true;
+
+    sidebar: Adw.NavigationPage {
+      title: bind story_title.text;
+      tag: "sidebar";
+
+      child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {
+          [end]
+          MenuButton {
+            icon-name: "open-menu-symbolic";
+            primary: true;
+            menu-model: primary_menu;
+          }
+        }
+
+        content: ScrolledWindow {
+          Adw.Clamp {
+            valign: start;
+
+            ListBox {
+              styles [
+                "navigation-sidebar"
+              ]
+
+              Adw.ActionRow {
+                title: _("Charatcers");
+
+                [prefix]
+                Image {
+                  icon-name: "people-symbolic";
+                }
+              }
+
+              Adw.ActionRow {
+                title: _("Locations");
+
+                [prefix]
+                Image {
+                  icon-name: "map-symbolic";
+                }
+              }
+
+              Adw.ActionRow {
+                title: _("Items");
+
+                [prefix]
+                Image {
+                  icon-name: "key-symbolic";
+                }
+              }
+
+              Adw.ActionRow {
+                title: _("Plots");
+              }
+            }
+          }
+        };
+      };
+    };
+
+    content: Adw.NavigationPage {
+      child: Stack {
+        StackPage characters_page {
+          title: _("Characters");
+
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar {
+              title-widget: Adw.WindowTitle {
+                title: bind characters_page.title;
+              };
+
+              [start]
+              Button add_character_button {
+                icon-name: "list-add-symbolic";
+                tooltip-text: _("Add Character");
+              }
+
+              [end]
+              Button {
+                icon-name: "loupe-large-symbolic";
+                tooltip-text: _("Search");
+              }
+            }
+
+            content: ScrolledWindow {
+              Adw.Clamp {
+                valign: start;
+                margin-start: 6;
+                margin-end: 6;
+
+                ListBox {
+                  selection-mode: none;
+                  margin-top: 6;
+
+                  styles [
+                    "boxed-list"
+                  ]
+
+                  Adw.ActionRow {
+                    title: "Character 1";
+                    subtitle: "Protagonist";
+
+                    [prefix]
+                    Adw.Avatar {
+                      size: 45;
+                      margin-top: 10;
+                      margin-bottom: 10;
+                    }
+
+                    [suffix]
+                    Button {
+                      icon-name: "open-book-symbolic";
+                      tooltip-text: _("Read Character Details");
+                      valign: center;
+                      has-frame: false;
+                    }
+
+                    [suffix]
+                    Button edit_button {
+                      icon-name: "document-edit-symbolic";
+                      tooltip-text: _("Edit Character");
+                      valign: center;
+                      has-frame: false;
+                    }
+                  }
+
+                  Adw.ActionRow {
+                    title: "Character 2";
+                    subtitle: "Antagonist";
+
+                    [prefix]
+                    Adw.Avatar {
+                      size: 45;
+                      margin-top: 10;
+                      margin-bottom: 10;
+                    }
+
+                    [suffix]
+                    Button {
+                      icon-name: "open-book-symbolic";
+                      tooltip-text: _("Read Character Details");
+                      valign: center;
+                      has-frame: false;
+                    }
+
+                    [suffix]
+                    Button {
+                      icon-name: "document-edit-symbolic";
+                      tooltip-text: _("Edit Character");
+                      valign: center;
+                      has-frame: false;
+                    }
+                  }
+                }
+              }
+            };
+          };
+        }
+      };
+    };
+  };
+}
+
+Adw.Dialog character_dialog {
+  title: _("Edit Character");
+  content-width: 600;
+  content-height: 490;
+
+  child: Adw.ToolbarView {
+    // bottom-bar-style: raised;
+
+    [top]
+    Adw.HeaderBar {}
+
+    [bottom]
+    ActionBar {
+      [center]
+      Button {
+        label: _("Save");
+        margin-bottom: 6;
+        margin-top: 6;
+
+        styles [
+          "pill",
+          "suggested-action"
+        ]
+      }
+    }
+
+    content: ScrolledWindow {
+      Adw.Clamp {
+        valign: start;
+        margin-top: 20;
+        margin-bottom: 20;
+        margin-start: 6;
+        margin-end: 6;
+        maximum-size: 500;
+
+        Box {
+          orientation: vertical;
+          spacing: 15;
+
+          Overlay {
+            halign: center;
+
+            Adw.Avatar {
+              size: 100;
+            }
+
+            [overlay]
+            Button {
+              icon-name: "document-edit-symbolic";
+              tooltip-text: _("Change Avatar");
+              valign: end;
+              halign: end;
+
+              styles [
+                "circular",
+                "opaque"
+              ]
+            }
+          }
+
+          ListBox {
+            styles [
+              "boxed-list"
+            ]
+
+            Adw.EntryRow {
+              title: _("Name");
+            }
+
+            Adw.EntryRow {
+              title: _("Nickname");
+            }
+          }
+
+          Adw.PreferencesGroup {
+            title: _("Appearance");
+
+            ListBox {
+              styles [
+                "boxed-list"
+              ]
+
+              Adw.EntryRow {
+                title: _("Hair Color");
+              }
+            }
+          }
+        }
+      }
+    };
+  };
+}
+
+Adw.Dialog story_details {
+  title: _("Story Details");
+  content-width: 500;
+  content-height: 350;
+
+  child: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    content: ScrolledWindow {
+      Adw.Clamp {
+        valign: start;
+        margin-top: 6;
+        maximum-size: 460;
+        margin-end: 6;
+        margin-start: 6;
+
+        Box {
+          orientation: vertical;
+
+          ListBox {
+            styles [
+              "boxed-list"
+            ]
+
+            Adw.EntryRow story_title {
+              title: _("Title");
+              text: "Witch Space";
+            }
+
+            Adw.EntryRow {
+              title: _("Summary");
+            }
+
+            Adw.EntryRow {
+              title: _("Genre");
+            }
+          }
+
+          Adw.PreferencesGroup {
+            title: _("Author");
+            margin-top: 12;
+
+            ListBox {
+              styles [
+                "boxed-list"
+              ]
+
+              Adw.EntryRow {
+                title: _("Name");
+              }
+            }
+          }
+        }
+      }
+    };
+  };
+}
+
+menu primary_menu {
+  section {
+    item ("Story Details", "demo.story_details")
+  }
+
+  section {
+    item ("Keyboard Shortcuts")
+    item ("About App")
+  }
+}
